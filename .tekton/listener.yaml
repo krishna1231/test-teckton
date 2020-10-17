@@ -48,21 +48,21 @@ spec:
               claimName: pipelinerun-$(uid)-pvc
         params:
         - name: repository
-          value: $(params.repository)
+          value: https://github.com/krishna1231/test-teckton.git
         - name: revision
-          value: $(params.revision)
+          value: master
         - name: apikey
-          value: $(params.apikey)
+          value: Tsn8FST9aM19wuqLiHuY5NIHs6Zh9bXYHq4f4wetaLIV
         - name: registryNamespace
-          value: $(params.registryNamespace)
+          value: test-teckton
         - name: registryRegion
-          value: $(params.registryRegion)
+          value: us-south
         - name: cluster
-          value: $(params.cluster)
+          value: whicpdev
         - name: clusterRegion
-          value: $(params.clusterRegion)
+          value: us-south
         - name: clusterNamespace
-          value: $(params.clusterNamespace)
+          value: mdx-dev
 ---
 apiVersion: tekton.dev/v1beta1
 kind: TriggerBinding
