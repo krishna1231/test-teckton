@@ -29,60 +29,60 @@ spec:
       image: alpine/git
       env:
         - name: REPOSITORY
-          value: https://github.com/krishna1231/test-teckton.git
+          value: $(params.repository)
         - name: REVISION
-          value: master
+          value: $(params.revision)
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
           echo "Cloning $REPOSITORY";
-          cd /workspace && git clone -q -b master https://github.com/krishna1231/test-teckton.git .;
+          cd /workspace && git clone -q -b $REVISION $REPOSITORY .;
     - name: pre-build-check
       image: ibmcom/pipeline-base-image
       env:
         - name: IBMCLOUD_API_KEY
-          value: Tsn8FST9aM19wuqLiHuY5NIHs6Zh9bXYHq4f4wetaLIV
+          value: $(params.apikey)
         - name: API
-          value: https://cloud.ibm.com
+          value: $(params.api)
         - name: REGION
-          value: us-south
+          value: $(params.registryRegion)
         - name: HOME
           value: "/root"
         - name: REGISTRY_NAMESPACE
-          value: test-teckton
+          value: $(params.registryNamespace)
         - name: IMAGE_NAME
-          value: test-teckton
+          value: $(params.imageName)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a https://cloud.ibm.com -r us-south;
+          ibmcloud login -a $API -r $REGION;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           cd /workspace && source pre-build-check.sh;
     - name: build-docker-image
       image: ibmcom/pipeline-base-image
       env:
         - name: IBMCLOUD_API_KEY
-          value: Tsn8FST9aM19wuqLiHuY5NIHs6Zh9bXYHq4f4wetaLIV
+          value: $(params.apikey)
         - name: API
-          value: https://cloud.ibm.com
+          value: $(params.api)
         - name: REGION
-          value: us-south
+          value: $(params.registryRegion)
         - name: HOME
           value: "/root"
         - name: REGISTRY_NAMESPACE
-          value: test-teckton
+          value: $(params.registryNamespace)
         - name: IMAGE_NAME
-          value: test-teckton
+          value: $(params.imageName)
         - name: ARCHIVE_DIR
           value: "/artifacts"
         - name: BUILD_NUMBER
           value: "0"
         - name: GIT_BRANCH
-          value: master
+          value: $(params.revision)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a https://cloud.ibm.com -r us-south;
+          ibmcloud login -a $API -r $REGION;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           export GIT_COMMIT=$(git rev-parse HEAD);
           export REGISTRY_URL=$(ibmcloud cr info | sed "2q;d" | awk '{for(i=1;i<=NF;i++) if ($i=="Registry") print $(i+1)}');
@@ -114,29 +114,29 @@ spec:
       image: alpine/git
       env:
         - name: REPOSITORY
-          value: https://github.com/krishna1231/test-teckton.git
+          value: $(params.repository)
         - name: REVISION
-          value: master
+          value: $(params.revision)
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
           echo "Cloning $REPOSITORY";
-          cd /workspace && git clone -q -b master https://github.com/krishna1231/test-teckton.git .;
+          cd /workspace && git clone -q -b $REVISION $REPOSITORY .;
     - name: check-vulnerabilities
       image: ibmcom/pipeline-base-image
       env:
         - name: IBMCLOUD_API_KEY
-          value: Tsn8FST9aM19wuqLiHuY5NIHs6Zh9bXYHq4f4wetaLIV
+          value: $(params.apikey)
         - name: API
-          value: https://cloud.ibm.com
+          value: $(params.api)
         - name: HOME
           value: "/root"
         - name: REGION
-          value: us-south
+          value: $(params.registryRegion)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a https://cloud.ibm.com -r us-south;
+          ibmcloud login -a $API -r $REGION;
           while read line; do export $line; done < /artifacts/build.properties;
           cp /artifacts/build.properties .;
           cd /workspace && source check-vulnerabilities.sh || true;
@@ -185,23 +185,23 @@ spec:
       image: ibmcom/pipeline-base-image
       env:
         - name: IBMCLOUD_API_KEY
-          value: Tsn8FST9aM19wuqLiHuY5NIHs6Zh9bXYHq4f4wetaLIV
+          value: $(params.apikey)
         - name: API
-          value: https://cloud.ibm.com
+          value: $(params.api)
         - name: REGION
-          value: us-south
+          value: $(params.clusterRegion)
         - name: HOME
           value: "/root"
         - name: DEPLOYMENT_FILE
           value: $(params.deployment-file)
         - name: CLUSTER_NAMESPACE
-          value: mdx-dev
+          value: $(params.clusterNamespace)
         - name: PIPELINE_KUBERNETES_CLUSTER_NAME
-          value: whicpdev
+          value: $(params.cluster)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a https://cloud.ibm.com -r us-south;
+          ibmcloud login -a $API -r $REGION;
           cd /workspace;
           export IKS_BETA_VERSION=1;
           ibmcloud ks cluster config -c "${PIPELINE_KUBERNETES_CLUSTER_NAME}";
@@ -213,23 +213,23 @@ spec:
       image: ibmcom/pipeline-base-image
       env:
         - name: IBMCLOUD_API_KEY
-          value: Tsn8FST9aM19wuqLiHuY5NIHs6Zh9bXYHq4f4wetaLIV
+          value: $(params.apikey)
         - name: API
-          value: https://cloud.ibm.com
+          value: $(params.api)
         - name: REGION
-          value: us-south
+          value: $(params.clusterRegion)
         - name: HOME
           value: "/root"
         - name: DEPLOYMENT_FILE
           value: $(params.deployment-file)
         - name: CLUSTER_NAMESPACE
-          value: mdx-dev
+          value: $(params.clusterNamespace)
         - name: PIPELINE_KUBERNETES_CLUSTER_NAME
-          value: whicpdev
+          value: $(params.cluster)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a https://cloud.ibm.com -r us-south;
+          ibmcloud login -a $API -r $REGION;
           export IKS_BETA_VERSION=1;
           ibmcloud ks cluster config -c "${PIPELINE_KUBERNETES_CLUSTER_NAME}";
           if which oc > /dev/null && ibmcloud ks cluster get -c "${PIPELINE_KUBERNETES_CLUSTER_NAME}" --json | jq -e '.type=="openshift"' > /dev/null; then oc login -u apikey -p "${IBMCLOUD_API_KEY}" ; fi;

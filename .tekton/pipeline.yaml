@@ -31,15 +31,15 @@ spec:
         name: build-task
       params:
         - name: repository
-          value: https://github.com/krishna1231/test-teckton.git
+          value: $(params.repository)
         - name: revision
-          value: master
+          value: $(params.revision)
         - name: apikey
-          value: Tsn8FST9aM19wuqLiHuY5NIHs6Zh9bXYHq4f4wetaLIV
+          value: $(params.apikey)
         - name: registryNamespace
-          value: test-teckton
+          value: $(params.registryNamespace)
         - name: registryRegion
-          value: us-south
+          value: $(params.registryRegion)
       workspaces:
       - name: task-pvc
         workspace: pipeline-pvc          
@@ -49,13 +49,13 @@ spec:
         name: validate-task
       params:
         - name: repository
-          value: https://github.com/krishna1231/test-teckton.git
+          value: $(params.repository)
         - name: revision
-          value: master
+          value: $(params.revision)
         - name: apikey
-          value: Tsn8FST9aM19wuqLiHuY5NIHs6Zh9bXYHq4f4wetaLIV
+          value: $(params.apikey)
         - name: registryRegion
-          value: us-south
+          value: $(params.registryRegion)
       workspaces:
       - name: task-pvc
         workspace: pipeline-pvc            
@@ -65,17 +65,17 @@ spec:
         name: deploy-task
       params:
         - name: repository
-          value: https://github.com/krishna1231/test-teckton.git
+          value: $(params.repository)
         - name: revision
-          value: master
+          value: $(params.revision)
         - name: apikey
-          value: Tsn8FST9aM19wuqLiHuY5NIHs6Zh9bXYHq4f4wetaLIV
+          value: $(params.apikey)
         - name: cluster
-          value: whicpdev
+          value: $(params.cluster)
         - name: clusterRegion
-          value: us-south
+          value: $(params.clusterRegion)
         - name: clusterNamespace
-          value: mdx-dev
+          value: $(params.clusterNamespace)
       workspaces:
       - name: task-pvc
         workspace: pipeline-pvc  
