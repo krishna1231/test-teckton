@@ -28,61 +28,61 @@ spec:
     - name: clone-repo
       image: alpine/git
       env:
-        - name: REPOSITORY
+        - name: repository
           value: $(params.repository)
-        - name: REVISION
+        - name: revision
           value: $(params.revision)
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
           echo "Cloning $REPOSITORY";
-          cd /workspace && git clone -q -b $REVISION $REPOSITORY .;
+          cd /workspace && git clone -q -b $revision $repository .;
     - name: pre-build-check
       image: ibmcom/pipeline-base-image
       env:
-        - name: IBMCLOUD_API_KEY
+        - name: apikey
           value: $(params.apikey)
-        - name: API
+        - name: api
           value: $(params.api)
-        - name: REGION
+        - name: registryRegion
           value: $(params.registryRegion)
         - name: HOME
           value: "/root"
-        - name: REGISTRY_NAMESPACE
+        - name: registryNamespace
           value: $(params.registryNamespace)
-        - name: IMAGE_NAME
+        - name: imageName
           value: $(params.imageName)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a $API -r $REGION;
+          ibmcloud login -a $api -r $region;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           cd /workspace && source pre-build-check.sh;
     - name: build-docker-image
       image: ibmcom/pipeline-base-image
       env:
-        - name: IBMCLOUD_API_KEY
+        - name: apikey
           value: $(params.apikey)
-        - name: API
+        - name: api
           value: $(params.api)
-        - name: REGION
+        - name: registryRegion
           value: $(params.registryRegion)
         - name: HOME
           value: "/root"
-        - name: REGISTRY_NAMESPACE
+        - name: registryNamespace
           value: $(params.registryNamespace)
-        - name: IMAGE_NAME
+        - name: imageName
           value: $(params.imageName)
         - name: ARCHIVE_DIR
           value: "/artifacts"
         - name: BUILD_NUMBER
           value: "0"
-        - name: GIT_BRANCH
+        - name: revision
           value: $(params.revision)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a $API -r $REGION;
+          ibmcloud login -a $api -r $region;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           export GIT_COMMIT=$(git rev-parse HEAD);
           export REGISTRY_URL=$(ibmcloud cr info | sed "2q;d" | awk '{for(i=1;i<=NF;i++) if ($i=="Registry") print $(i+1)}');
@@ -113,30 +113,30 @@ spec:
     - name: clone-repo
       image: alpine/git
       env:
-        - name: REPOSITORY
+        - name: repository
           value: $(params.repository)
-        - name: REVISION
+        - name: revision
           value: $(params.revision)
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
-          echo "Cloning $REPOSITORY";
-          cd /workspace && git clone -q -b $REVISION $REPOSITORY .;
+          echo "Cloning $repository";
+          cd /workspace && git clone -q -b $revision $repository .;
     - name: check-vulnerabilities
       image: ibmcom/pipeline-base-image
       env:
-        - name: IBMCLOUD_API_KEY
+        - name: apikey
           value: $(params.apikey)
-        - name: API
+        - name: api
           value: $(params.api)
         - name: HOME
           value: "/root"
-        - name: REGION
+        - name: registryRegion
           value: $(params.registryRegion)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a $API -r $REGION;
+          ibmcloud login -a $api -r $region;
           while read line; do export $line; done < /artifacts/build.properties;
           cp /artifacts/build.properties .;
           cd /workspace && source check-vulnerabilities.sh || true;
@@ -172,67 +172,67 @@ spec:
     - name: clone-repo
       image: alpine/git
       env:
-        - name: REPOSITORY
+        - name: repository
           value: $(params.repository)
-        - name: REVISION
+        - name: revision
           value: $(params.revision)
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
-          echo "Cloning $REPOSITORY";
-          cd /workspace && git clone -q -b $REVISION $REPOSITORY .;
+          echo "Cloning $repository";
+          cd /workspace && git clone -q -b $revision $repository .;
     - name: pre-deploy-check
       image: ibmcom/pipeline-base-image
       env:
-        - name: IBMCLOUD_API_KEY
+        - name: apikey
           value: $(params.apikey)
-        - name: API
+        - name: api
           value: $(params.api)
-        - name: REGION
+        - name: region
           value: $(params.clusterRegion)
         - name: HOME
           value: "/root"
-        - name: DEPLOYMENT_FILE
+        - name: deployment-file
           value: $(params.deployment-file)
-        - name: CLUSTER_NAMESPACE
+        - name: clusterNamespace
           value: $(params.clusterNamespace)
-        - name: PIPELINE_KUBERNETES_CLUSTER_NAME
+        - name: cluster
           value: $(params.cluster)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a $API -r $REGION;
+          ibmcloud login -a $api -r $region;
           cd /workspace;
           export IKS_BETA_VERSION=1;
-          ibmcloud ks cluster config -c "${PIPELINE_KUBERNETES_CLUSTER_NAME}";
-          if which oc > /dev/null && ibmcloud ks cluster get -c "${PIPELINE_KUBERNETES_CLUSTER_NAME}" --json | jq -e '.type=="openshift"' > /dev/null; then oc login -u apikey -p "${IBMCLOUD_API_KEY}" ; fi;
+          ibmcloud ks cluster config -c "${cluster}";
+          if which oc > /dev/null && ibmcloud ks cluster get -c "${cluster}" --json | jq -e '.type=="openshift"' > /dev/null; then oc login -u apikey -p "${IBMCLOUD_API_KEY}" ; fi;
           while read line; do export $line; done < /artifacts/build.properties;
           cp /artifacts/build.properties .;
           cd /workspace && source pre-deploy-check.sh;
     - name: deploy-to-kubernetes
       image: ibmcom/pipeline-base-image
       env:
-        - name: IBMCLOUD_API_KEY
+        - name: apikey
           value: $(params.apikey)
-        - name: API
+        - name: api
           value: $(params.api)
-        - name: REGION
+        - name: region
           value: $(params.clusterRegion)
         - name: HOME
           value: "/root"
-        - name: DEPLOYMENT_FILE
+        - name: deployment-file
           value: $(params.deployment-file)
-        - name: CLUSTER_NAMESPACE
+        - name: clusterNamespace
           value: $(params.clusterNamespace)
-        - name: PIPELINE_KUBERNETES_CLUSTER_NAME
+        - name: cluster
           value: $(params.cluster)
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a $API -r $REGION;
+          ibmcloud login -a $api -r $region;
           export IKS_BETA_VERSION=1;
-          ibmcloud ks cluster config -c "${PIPELINE_KUBERNETES_CLUSTER_NAME}";
-          if which oc > /dev/null && ibmcloud ks cluster get -c "${PIPELINE_KUBERNETES_CLUSTER_NAME}" --json | jq -e '.type=="openshift"' > /dev/null; then oc login -u apikey -p "${IBMCLOUD_API_KEY}" ; fi;
+          ibmcloud ks cluster config -c "${cluster}";
+          if which oc > /dev/null && ibmcloud ks cluster get -c "${cluster}" --json | jq -e '.type=="openshift"' > /dev/null; then oc login -u apikey -p "${IBMCLOUD_API_KEY}" ; fi;
           while read line; do export $line; done < /artifacts/build.properties;
           cp /artifacts/build.properties .;
           cd /workspace && source deploy-to-kubernetes.sh;
