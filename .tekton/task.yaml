@@ -35,7 +35,7 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
         - set -e -o pipefail;
-          echo "Cloning $REPOSITORY";
+          echo "Cloning $repository";
           cd /workspace && git clone -q -b $revision $repository .;
     - name: pre-build-check
       image: ibmcom/pipeline-base-image
@@ -55,7 +55,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a $api -r $region;
+          ibmcloud login -a $apikey -r $region;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           cd /workspace && source pre-build-check.sh;
     - name: build-docker-image
