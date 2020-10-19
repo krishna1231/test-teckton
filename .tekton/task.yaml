@@ -55,7 +55,7 @@ spec:
       command: ["/bin/bash", "-c"]
       args:
         - set -e -o pipefail;
-          ibmcloud login -a $apikey -r $region;
+          ibmcloud login -a $api -u krishnapolimetla@gmail.com -u Teeksh@18 -r $region;
           export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh";
           cd /workspace && source pre-build-check.sh;
     - name: build-docker-image
