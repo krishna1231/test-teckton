@@ -29,8 +29,8 @@ fi
 # https://console.bluemix.net/docs/services/ContinuousDelivery/pipeline_deploy_var.html#deliverypipeline_environment
 
 # Input env variables from pipeline job
-echo "PIPELINE_KUBERNETES_CLUSTER_NAME=${PIPELINE_KUBERNETES_CLUSTER_NAME}"
-echo "CLUSTER_NAMESPACE=${CLUSTER_NAMESPACE}"
+echo "PIPELINE_KUBERNETES_CLUSTER_NAME=${cluster}"
+echo "CLUSTER_NAMESPACE=${clusterNamespace}"
 
 echo "=========================================================="
 echo "CHECKING DEPLOYMENT.YML manifest"
@@ -44,9 +44,9 @@ fi
 #Check cluster availability
 echo "=========================================================="
 echo "CHECKING CLUSTER readiness and namespace existence"
-IP_ADDR=$(ibmcloud ks workers --cluster ${PIPELINE_KUBERNETES_CLUSTER_NAME} | grep normal | awk '{ print $2 }')
+IP_ADDR=$(ibmcloud ks workers --cluster ${cluster} | grep normal | awk '{ print $2 }')
 if [ -z "${IP_ADDR}" ]; then
-  echo -e "${PIPELINE_KUBERNETES_CLUSTER_NAME} not created or workers not ready"
+  echo -e "${cluster} not created or workers not ready"
   exit 1
 fi
 echo "Configuring cluster namespace"
