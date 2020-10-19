@@ -12,6 +12,7 @@
 # image registry (using an IBM Cloud API Key). It also configures Helm Tiller service to later perform a deploy with Helm.
 
 # Input env variables (can be received via a pipeline environment properties.file.
+<<'COMMENTS'
 echo "IMAGE_NAME=${IMAGE_NAME}"
 echo "IMAGE_TAG=${IMAGE_TAG}"
 echo "REGISTRY_URL=${REGISTRY_URL}"
@@ -85,3 +86,5 @@ fi
 echo "default serviceAccount:"
 kubectl get serviceaccount default --namespace ${CLUSTER_NAMESPACE} -o yaml
 echo -e "Namespace ${CLUSTER_NAMESPACE} authorizing with private image registry using patched default serviceAccount"
+COMMENTS
+echo "check done"
